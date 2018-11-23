@@ -4,13 +4,36 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <style>
+        body { font-family: Arial}
+    </style>
+    <script>
+        $(document).ready(function() {
+            function updateMessages() {
+                $.ajax({
+                  method: "GET",
+                  url: "https://us-central1-junction-2018.cloudfunctions.net/get-percentage",
+                  dataType: "json"
+                }).done(function(data) {
+                    let percentage = Math.floor(data.percentage*100);
+                    $("#percentage").text(percentage + "%");
+                    $("#waiting").hide();
+                    // $("body").css("background-color", 'hsl('+percentage+'%,'+percentage+'%,100%)');
+                });
+                setTimeout(updateMessages, 10000);
+            }
+            $(function() {
+                updateMessages();
+            });
+        });
+    </script>
 </head>
-<body>
-<h3 id="percentage"></h3>
-<script>
-    $(document).ready(function() {
-    });
-</script>
+<body style="background-color: #333">
+<div style="color: whitesmoke; text-align: center">
+    <p>Relevance percentage:</p>
+    <h2 id="waiting">Waiting for data</h2>
+    <p id="percentage" style="font-size: 8em"></p>
+</div>
 
 </body>
 </html>

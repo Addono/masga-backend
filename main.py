@@ -196,5 +196,11 @@ def quadro(c: list, d: list, n: list):
 
 
 def access_point(request):
-    return json.dumps({"percentage": poll_api()})
+    headers = {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type',
+    }
+
+    return (json.dumps({"percentage": poll_api()}), 200, headers)
 
