@@ -4,8 +4,10 @@ import math
 
 BASE_URL = "https://apigtw.vaisala.com/hackjunction2018/saunameasurements/"
 
+
 def get_latest_url_for_device_id(device_id):
     return BASE_URL + "latest?SensorID=" + device_id + "&limit=1"
+
 
 def poll_data(device_id):
     url = get_latest_url_for_device_id(device_id)
@@ -14,10 +16,12 @@ def poll_data(device_id):
 
     return object
 
+
 def extract_value(data, key):
     assert len(data) == 1
 
     return data[0]['Measurements'][key]['value']
+
 
 def poll_api():
     # Bench2: Temp, Bench2: Hum / 10, Floor1: Temp, Bench1: CO2 / 100
@@ -49,6 +53,7 @@ def poll_api():
         print("Math error: %s" % e)
 
     return 0
+
 
 def quadro(c: list, d: list, n: list):
     """
@@ -207,4 +212,4 @@ def access_point(request):
         'Access-Control-Allow-Headers': 'Content-Type',
     }
 
-    return (json.dumps({"percentage": poll_api()}), 200, headers)
+    return json.dumps({"percentage": poll_api()}), 200, headers
