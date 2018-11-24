@@ -226,7 +226,7 @@ def access_for_users():
 def access_for_managers():
     values = [
         ["Stove1", "Temperature", 10, 350],
-        ["Floor1", "Relative humidity", 10, 50],
+        ["Bench2", "Enthalpy", 100, 280],
         ["Bench1", "Carbon Dioxide concentration", 100, 800],
         ["Bench2", "Relative humidity", 1, 10],
     ]
