@@ -228,24 +228,30 @@ def access_for_managers():
         ["Stove1", "Temperature", 10, 350],
         ["Bench2", "Enthalpy", 10, 280],
         ["Bench1", "Carbon Dioxide concentration", 100, 800],
-        ["Bench2", "Relative humidity", 1, 10],
+        ["Bench2", "Relative humidity", 1, 18],
     ]
 
     (data, percentage) = poll_api(values)
 
     message = []
     if percentage < .5:
-        if extract_value(data['Stove1'], 'Temperature') < 200:
-            message.append("Turn on stove")
+        if extract_value(data['Stove1'], 'Temperature') < 280\
+                or extract_value(data['Bench2'], 'Enthalpy') < 180:
+            message.append("Power up the stove")
 
-        if extract_value(data['Stove1'], 'Temperature') > 400:
-            message.append("Turn off stove")
+        elif extract_value(data['Stove1'], 'Temperature') > 400:
+            message.append("Power down the stove")
 
-        if extract_value(data['Bench2'], 'Relative humidity') < 10:
-            message.append("Open automatic valve")
+        if extract_value(data['Bench2'], 'Enthalpy') > 400:
+            message.append("Cool down the stove")
+
+        if extract_value(data['Bench2'], 'Relative humidity') < 12:
+            message.append("Add more water")
+        elif extract_value(data['Bench2'], 'Relative humidity') > 28:
+            message.append("Don't add water")
 
         if extract_value(data['Bench1'], 'Carbon Dioxide concentration') > 1000:
-            message.append("High CO2 levels: Turn on air ventilation")
+            message.append("Turn on air ventilation or open the door")
 
     return json.dumps({"percentage": percentage, "message": message, "data": data}), 200, headers
 
