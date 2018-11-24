@@ -43,7 +43,12 @@ def poll_api():
 
     optimal = [67.77, 1049, 74.75, 27.37]
 
-    return quadro(input, optimal, normalization)
+    try:
+        return quadro(input, optimal, normalization)
+    except ValueError as e:
+        print("Math error: %s" % e)
+
+    return 0
 
 def quadro(c: list, d: list, n: list):
     """
@@ -190,7 +195,7 @@ def quadro(c: list, d: list, n: list):
         S21 = math.pow(s2, v) * s4
 
     # S22 = ((s2) ^ v);
-    S22 = math.pow(s2, v)
+    # S22 = math.pow(s2, v)
 
     return S21
 
@@ -203,4 +208,3 @@ def access_point(request):
     }
 
     return (json.dumps({"percentage": poll_api()}), 200, headers)
-
