@@ -1,3 +1,3 @@
 from main import access_point
 
-access_point(None)
+print(access_point(None))
