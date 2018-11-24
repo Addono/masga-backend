@@ -30,7 +30,7 @@ def poll_api():
     values = [
         ["Bench1", "Temperature", 1],
         ["Bench1", "Carbon Dioxide concentration", 10],
-        ["Bench2", "Temperature", 1],
+        ["Floor1", "Temperature", 1],
         ["Bench2", "Relative humidity", 100],
     ]
 
