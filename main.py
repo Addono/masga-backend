@@ -23,16 +23,9 @@ def extract_value(data, key):
     return data[0]['Measurements'][key]['value']
 
 
-def poll_api():
+def poll_api(values):
     # Bench2: Temp, Bench2: Hum / 10, Floor1: Temp, Bench1: CO2 / 100
     print("--------")
-
-    values = [
-        ["Bench3", "Oxygen concentration", 1, 17.0],
-        ["Bench2", "Temperature", 5, 70.0],
-        ["Bench1", "Carbon Dioxide concentration", 100, 800.0],
-        ["Floor1", "Temperature", 5, 35.0],
-    ]
 
     all_sensors = set([row[0] for row in values])
     all_data = {device_id: poll_data(device_id) for device_id in all_sensors}
@@ -48,11 +41,11 @@ def poll_api():
         print(device_id + "\t" + value + ":\t" + str(output))
 
     try:
-        return quadro(input, optimal, normalization)
+        return all_data, quadro(input, optimal, normalization)
     except ValueError as e:
         print("Math error: %s" % e)
 
-    return 0
+    return all_data, 0
 
 
 def quadro(c: list, d: list, n: list):
@@ -204,12 +197,61 @@ def quadro(c: list, d: list, n: list):
 
     return S21
 
+headers = {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+}
+
+def access_for_users():
+    values = [
+        ["Bench3", "Oxygen concentration", 1, 17.0],
+        ["Bench2", "Temperature", 5, 70.0],
+        ["Bench1", "Carbon Dioxide concentration", 100, 800.0],
+        ["Floor1", "Temperature", 5, 35.0],
+    ]
+
+    (data, percentage) = poll_api(values)
+
+    message = []
+    if percentage < .5:
+        if extract_value(data['Bench2'], 'Relative humidity') < 10:
+            message.append("Add water to stove")
+
+        if extract_value(data['Bench1'], 'Carbon Dioxide concentration') > 1000:
+            message.append("High CO2 levels, open the door")
+
+    return json.dumps({"percentage": percentage, "message": message, "data": data}), 200, headers
+
+def access_for_managers():
+    values = [
+        ["Stove1", "Temperature", 10, 350],
+        ["Floor1", "Relative humidity", 10, 50],
+        ["Bench1", "Carbon Dioxide concentration", 100, 800],
+        ["Bench2", "Relative humidity", 1, 10],
+    ]
+
+    (data, percentage) = poll_api(values)
+
+    message = []
+    if percentage < .5:
+        if extract_value(data['Stove1'], 'Temperature') < 200:
+            message.append("Turn on stove")
+
+        if extract_value(data['Stove1'], 'Temperature') > 400:
+            message.append("Turn off stove")
+
+        if extract_value(data['Bench2'], 'Relative humidity') < 10:
+            message.append("Open automatic valve")
+
+        if extract_value(data['Bench1'], 'Carbon Dioxide concentration') > 1000:
+            message.append("High CO2 levels: Turn on air ventilation")
+
+    return json.dumps({"percentage": percentage, "message": message, "data": data}), 200, headers
+
 
 def access_point(request):
-    headers = {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers': 'Content-Type',
-    }
-
-    return json.dumps({"percentage": poll_api()}), 200, headers
+    if request != None and request.args.get("user") == "manager":
+        return access_for_managers()
+    else:
+        return access_for_users()
