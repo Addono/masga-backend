@@ -214,12 +214,11 @@ def access_for_users():
     (data, percentage) = poll_api(values)
 
     message = []
-    if percentage < .5:
-        if extract_value(data['Bench2'], 'Relative humidity') < 10:
-            message.append("Add water to stove")
+    if extract_value(data['Bench2'], 'Relative humidity') < 10:
+        message.append("Add water to stove")
 
-        if extract_value(data['Bench1'], 'Carbon Dioxide concentration') > 1000:
-            message.append("High CO2 levels, open the door")
+    if extract_value(data['Bench1'], 'Carbon Dioxide concentration') > 1000:
+        message.append("High CO2 levels, open the door")
 
     return json.dumps({"percentage": percentage, "message": message, "data": data}), 200, headers
 
@@ -234,24 +233,23 @@ def access_for_managers():
     (data, percentage) = poll_api(values)
 
     message = []
-    if percentage < .5:
-        if extract_value(data['Stove1'], 'Temperature') < 280\
-                or extract_value(data['Bench2'], 'Enthalpy') < 180:
-            message.append("Power up the stove")
+    if extract_value(data['Stove1'], 'Temperature') < 280\
+            or extract_value(data['Bench2'], 'Enthalpy') < 180:
+        message.append("Power up the stove")
 
-        elif extract_value(data['Stove1'], 'Temperature') > 400:
-            message.append("Power down the stove")
+    elif extract_value(data['Stove1'], 'Temperature') > 400:
+        message.append("Power down the stove")
 
-        if extract_value(data['Bench2'], 'Enthalpy') > 400:
-            message.append("Cool down the stove")
+    if extract_value(data['Bench2'], 'Enthalpy') > 400:
+        message.append("Cool down the stove")
 
-        if extract_value(data['Bench2'], 'Relative humidity') < 12:
-            message.append("Add more water")
-        elif extract_value(data['Bench2'], 'Relative humidity') > 28:
-            message.append("Don't add water")
+    if extract_value(data['Bench2'], 'Relative humidity') < 12:
+        message.append("Add more water")
+    elif extract_value(data['Bench2'], 'Relative humidity') > 28:
+        message.append("Don't add water")
 
-        if extract_value(data['Bench1'], 'Carbon Dioxide concentration') > 1000:
-            message.append("Turn on air ventilation or open the door")
+    if extract_value(data['Bench1'], 'Carbon Dioxide concentration') > 1000:
+        message.append("Turn on air ventilation or open the door")
 
     return json.dumps({"percentage": percentage, "message": message, "data": data}), 200, headers
 
