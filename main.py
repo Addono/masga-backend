@@ -28,10 +28,10 @@ def poll_api():
     print("--------")
 
     values = [
-        ["Bench1", "Temperature", 1],
-        ["Bench1", "Carbon Dioxide concentration", 10],
-        ["Floor1", "Temperature", 1],
-        ["Bench2", "Relative humidity", 100],
+        ["Bench3", "Oxygen concentration", 1, 17.0],
+        ["Bench2", "Temperature", 5, 70.0],
+        ["Bench1", "Carbon Dioxide concentration", 100, 800.0],
+        ["Floor1", "Temperature", 5, 35.0],
     ]
 
     all_sensors = set([row[0] for row in values])
@@ -39,13 +39,13 @@ def poll_api():
 
     input = []
     normalization = []
-    for (device_id, value, n) in values:
+    optimal = []
+    for (device_id, value, n, o) in values:
         output = extract_value(all_data[device_id], value)
         input.append(output)
         normalization.append(n)
+        optimal.append(o)
         print(device_id + "\t" + value + ":\t" + str(output))
-
-    optimal = [67.77, 1049, 74.75, 27.37]
 
     try:
         return quadro(input, optimal, normalization)
